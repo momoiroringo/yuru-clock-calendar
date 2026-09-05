@@ -787,16 +787,22 @@
 
       function getRainHours(times, probabilities, rainAmounts) {
         const rainHours = [];
+        const current = new Date();
         const todayKey = new Intl.DateTimeFormat("sv-SE", {
           timeZone: WEATHER_LOCATION.timezone,
           year: "numeric", month: "2-digit", day: "2-digit"
         }).format(new Date());
+        const currentHour = Number(new Intl.DateTimeFormat("en-US", {
+          timeZone: WEATHER_LOCATION.timezone,
+          hour: "2-digit", hour12: false
+        }).format(current));
 
         times.forEach((time, index) => {
           const isToday = time.startsWith(todayKey);
+          const hour = Number(time.slice(11, 13));
           const probability = probabilities[index] || 0;
           const amount = rainAmounts[index] || 0;
-          if (isToday && (probability >= 40 || amount >= 0.1)) {
+          if (isToday && hour >= currentHour && (probability >= 40 || amount >= 0.1)) {
             rainHours.push(new Date(`${time}:00`));
           }
         });
