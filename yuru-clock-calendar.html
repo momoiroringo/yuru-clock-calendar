@@ -572,7 +572,7 @@
           </div>
         </div>
         <div class="hourly" id="hourlyForecast" aria-label="これからの時間別予報"></div>
-        <p class="rain-message" id="rainMessage">雨の時間帯を確認中…</p>
+        <p class="rain-message" id="rainMessage">朝のお出かけ（4:30〜4:50）の傘予報を確認中…</p>
         <div class="weather-source">
           <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">weather data: Open-Meteo</a>
         </div>
@@ -785,6 +785,25 @@
         return `${String(value).padStart(2, "0")}時`;
       }
 
+      function getLocalDateKey() {
+        return new Intl.DateTimeFormat("sv-SE", {
+          timeZone: WEATHER_LOCATION.timezone,
+          year: "numeric", month: "2-digit", day: "2-digit"
+        }).format(new Date());
+      }
+
+      function getDepartureRainStatus(times, probabilities, rainAmounts) {
+        const todayKey = getLocalDateKey();
+        const departureIndex = times.findIndex((time) => time.startsWith(`${todayKey}T04:00`));
+        if (departureIndex === -1) return "朝のお出かけ（4:30〜4:50）：予報を確認できません。";
+
+        const probability = probabilities[departureIndex] || 0;
+        const amount = rainAmounts[departureIndex] || 0;
+        const needsUmbrella = probability >= 40 || amount >= 0.1;
+        if (needsUmbrella) return `朝のお出かけ（4:30〜4:50）：傘を忘れずに。${probability}%の雨予報です。`;
+        return `朝のお出かけ（4:30〜4:50）：今日は傘なしで大丈夫そうです。${probability}%の雨予報です。`;
+      }
+
       function getRainHours(times, probabilities, rainAmounts) {
         const rainHours = [];
         const current = new Date();
@@ -861,8 +880,8 @@
           return `<div class="hour"><span class="hour-time">${formatHour(date.getHours())}</span><span class="hour-icon" aria-hidden="true">${hourIcon}</span><span class="hour-rain">${probability >= 20 ? `雨 ${probability}%` : "　"}</span></div>`;
         }).join("");
 
-        const rainHours = getRainHours(hourly.time, hourly.precipitation_probability, hourly.rain);
-        rainMessage.textContent = formatRainWindow(rainHours);
+        const rainHours = getDepartureRainStatus(hourly.time, hourly.precipitation_probability, hourly.rain);
+        rainMessage.textContent = rainHours;
       }
 
       async function loadWeather() {
@@ -886,7 +905,7 @@
           weatherHigh.textContent = "最高 --°";
           weatherLow.textContent = "最低 --°";
           hourlyForecast.innerHTML = "<span class=\"weather-error\">予報を読み込めませんでした。</span>";
-          rainMessage.textContent = "時間をおいて再読み込みしてください。";
+          rainMessage.textContent = "朝のお出かけの傘予報を取得できませんでした。";
         }
       }
 
