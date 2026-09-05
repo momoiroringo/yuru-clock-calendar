@@ -257,6 +257,206 @@
       text-align: center;
     }
 
+    .weather-divider {
+      height: 1px;
+      margin: 16px 0 14px;
+      background-image: linear-gradient(to right, var(--line) 35%, transparent 35%);
+      background-position: top;
+      background-size: 5px 1px;
+      background-repeat: repeat-x;
+    }
+
+    .weather-card {
+      padding: 12px 12px 11px;
+      border: 1px solid rgba(137, 111, 91, 0.12);
+      border-radius: 16px;
+      background: rgba(255, 250, 243, 0.5);
+    }
+
+    .weather-heading,
+    .weather-main,
+    .weather-range,
+    .weather-source {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .weather-kicker {
+      color: var(--muted);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+    }
+
+    .weather-location {
+      margin-top: 2px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .weather-icon {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      font-size: 19px;
+    }
+
+    .weather-main {
+      align-items: end;
+      margin-top: 9px;
+    }
+
+    .weather-temp {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .weather-summary {
+      display: inline-block;
+      margin-left: 5px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .weather-range {
+      align-items: baseline;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .hourly {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 2px;
+      margin-top: 12px;
+      padding-top: 9px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .hour {
+      min-width: 0;
+      color: var(--muted);
+      font-size: 8px;
+      text-align: center;
+    }
+
+    .hour-time { letter-spacing: 0.03em; }
+
+    .hour-icon {
+      display: block;
+      margin: 5px 0 3px;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .hour-rain {
+      color: var(--accent);
+      font-size: 8px;
+    }
+
+    .rain-message {
+      min-height: 14px;
+      margin: 10px 0 0;
+      color: var(--ink);
+      font-size: 10px;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+
+    .weather-source {
+      justify-content: flex-end;
+      margin-top: 7px;
+      font-size: 8px;
+    }
+
+    .weather-source a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .weather-source a:hover,
+    .weather-source a:focus-visible {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .weather-error { color: var(--muted); }
+
+    .quick-access {
+      margin-top: 16px;
+    }
+
+    .quick-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .quick-kicker {
+      color: var(--muted);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+    }
+
+    .quick-hint {
+      color: var(--muted);
+      font-size: 8px;
+    }
+
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 9px;
+    }
+
+    .quick-link {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      gap: 5px;
+      min-height: 31px;
+      padding: 6px 7px;
+      overflow: hidden;
+      border: 1px solid rgba(137, 111, 91, 0.15);
+      border-radius: 10px;
+      color: var(--ink);
+      background: rgba(255, 250, 243, 0.42);
+      font-size: 10px;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+
+    .quick-link:hover,
+    .quick-link:focus-visible {
+      outline: none;
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      transform: translateY(-1px);
+    }
+
+    .quick-icon {
+      flex: 0 0 auto;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .quick-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .footer {
       display: flex;
       align-items: center;
@@ -351,6 +551,50 @@
         <p class="calendar-note" id="calendarNote">実りの季節を、ひとやすみ。</p>
       </section>
 
+      <div class="weather-divider"></div>
+
+      <section class="weather-card" aria-label="今日の天気" aria-live="polite">
+        <div class="weather-heading">
+          <div>
+            <div class="weather-kicker">YURU WEATHER</div>
+            <div class="weather-location" id="weatherLocation">東京</div>
+          </div>
+          <span class="weather-icon" id="weatherIcon" aria-hidden="true">☀️</span>
+        </div>
+        <div class="weather-main">
+          <div>
+            <span class="weather-temp" id="weatherTemp">--°</span>
+            <span class="weather-summary" id="weatherSummary">読み込み中…</span>
+          </div>
+          <div class="weather-range">
+            <span id="weatherHigh">最高 --°</span>
+            <span id="weatherLow">最低 --°</span>
+          </div>
+        </div>
+        <div class="hourly" id="hourlyForecast" aria-label="これからの時間別予報"></div>
+        <p class="rain-message" id="rainMessage">雨の時間帯を確認中…</p>
+        <div class="weather-source">
+          <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">weather data: Open-Meteo</a>
+        </div>
+      </section>
+
+      <section class="quick-access" aria-label="クイックアクセス">
+        <div class="quick-title">
+          <span class="quick-kicker">QUICK ACCESS</span>
+          <span class="quick-hint">いつもの場所へ</span>
+        </div>
+        <nav class="quick-links" aria-label="Notionページへのショートカット">
+          <a class="quick-link" href="#" data-notion-key="diary"><span class="quick-icon" aria-hidden="true">📖</span><span class="quick-label">日記</span></a>
+          <a class="quick-link" href="#" data-notion-key="gallery"><span class="quick-icon" aria-hidden="true">📷</span><span class="quick-label">ギャラリー</span></a>
+          <a class="quick-link" href="#" data-notion-key="bread"><span class="quick-icon" aria-hidden="true">🍞</span><span class="quick-label">パン</span></a>
+          <a class="quick-link" href="#" data-notion-key="fermentation"><span class="quick-icon" aria-hidden="true">🫙</span><span class="quick-label">発酵</span></a>
+          <a class="quick-link" href="#" data-notion-key="sweets"><span class="quick-icon" aria-hidden="true">🍰</span><span class="quick-label">お菓子</span></a>
+          <a class="quick-link" href="#" data-notion-key="handmade"><span class="quick-icon" aria-hidden="true">🍯</span><span class="quick-label">手仕事</span></a>
+          <a class="quick-link" href="#" data-notion-key="color"><span class="quick-icon" aria-hidden="true">🎨</span><span class="quick-label">色</span></a>
+          <a class="quick-link" href="#" data-notion-key="favorites"><span class="quick-icon" aria-hidden="true">⭐</span><span class="quick-label">お気に入り</span></a>
+        </nav>
+      </section>
+
       <div class="footer">
         <span>small moments, softly</span>
         <span class="bread-mark" aria-label="小さな丸パンのマーク"></span>
@@ -390,6 +634,35 @@
       const calendarBody = document.getElementById("calendarBody");
       const calendarNote = document.getElementById("calendarNote");
       const root = document.documentElement;
+
+      // Change this one object later to move the weather card to another place.
+      const WEATHER_LOCATION = {
+        name: "春日部市",
+        latitude: 35.975305,
+        longitude: 139.752409,
+        timezone: "Asia/Tokyo"
+      };
+
+      // Notion page URLs can be added here later; blank entries stay inactive.
+      const QUICK_ACCESS_URLS = {
+        diary: "",
+        gallery: "",
+        bread: "",
+        fermentation: "",
+        sweets: "",
+        handmade: "",
+        color: "",
+        favorites: ""
+      };
+
+      const weatherLocation = document.getElementById("weatherLocation");
+      const weatherIcon = document.getElementById("weatherIcon");
+      const weatherTemp = document.getElementById("weatherTemp");
+      const weatherSummary = document.getElementById("weatherSummary");
+      const weatherHigh = document.getElementById("weatherHigh");
+      const weatherLow = document.getElementById("weatherLow");
+      const hourlyForecast = document.getElementById("hourlyForecast");
+      const rainMessage = document.getElementById("rainMessage");
 
       const now = new Date();
       let viewedYear = now.getFullYear();
@@ -462,8 +735,158 @@
       document.getElementById("prevMonth").addEventListener("click", () => moveMonth(-1));
       document.getElementById("nextMonth").addEventListener("click", () => moveMonth(1));
 
+      document.querySelectorAll(".quick-link").forEach((link) => {
+        const url = QUICK_ACCESS_URLS[link.dataset.notionKey];
+        if (url) {
+          link.href = url;
+          link.target = "_blank";
+          link.rel = "noreferrer";
+        } else {
+          link.addEventListener("click", (event) => event.preventDefault());
+        }
+      });
+
+      const weatherCodes = {
+        0: ["☀️", "晴れ"],
+        1: ["🌤️", "おおむね晴れ"],
+        2: ["⛅", "晴れ時々くもり"],
+        3: ["☁️", "くもり"],
+        45: ["🌫️", "霧"],
+        48: ["🌫️", "霧"],
+        51: ["🌦️", "弱い霧雨"],
+        53: ["🌦️", "霧雨"],
+        55: ["🌧️", "霧雨"],
+        56: ["🌧️", "凍る霧雨"],
+        57: ["🌧️", "凍る霧雨"],
+        61: ["🌧️", "弱い雨"],
+        63: ["🌧️", "雨"],
+        65: ["🌧️", "強い雨"],
+        66: ["🌨️", "凍る雨"],
+        67: ["🌨️", "凍る雨"],
+        71: ["❄️", "弱い雪"],
+        73: ["❄️", "雪"],
+        75: ["❄️", "強い雪"],
+        77: ["🌨️", "雪あられ"],
+        80: ["🌦️", "にわか雨"],
+        81: ["🌦️", "にわか雨"],
+        82: ["🌧️", "強いにわか雨"],
+        85: ["🌨️", "にわか雪"],
+        86: ["🌨️", "にわか雪"],
+        95: ["⛈️", "雷雨"],
+        96: ["⛈️", "雷雨とひょう"],
+        99: ["⛈️", "雷雨とひょう"]
+      };
+
+      function weatherLabel(code) {
+        return weatherCodes[code] || ["🌤️", "空模様" ];
+      }
+
+      function formatHour(value) {
+        return `${String(value).padStart(2, "0")}時`;
+      }
+
+      function getRainHours(times, probabilities, rainAmounts) {
+        const rainHours = [];
+        const todayKey = new Intl.DateTimeFormat("sv-SE", {
+          timeZone: WEATHER_LOCATION.timezone,
+          year: "numeric", month: "2-digit", day: "2-digit"
+        }).format(new Date());
+
+        times.forEach((time, index) => {
+          const isToday = time.startsWith(todayKey);
+          const probability = probabilities[index] || 0;
+          const amount = rainAmounts[index] || 0;
+          if (isToday && (probability >= 40 || amount >= 0.1)) {
+            rainHours.push(new Date(`${time}:00`));
+          }
+        });
+        return rainHours;
+      }
+
+      function formatRainWindow(hours) {
+        if (!hours.length) return "今日は大きな雨の予報はありません。";
+        const windows = [];
+        let start = hours[0];
+        let end = hours[0];
+        for (let i = 1; i < hours.length; i += 1) {
+          const difference = hours[i] - end;
+          if (difference <= 60 * 60 * 1000) end = hours[i];
+          else {
+            windows.push([start, end]);
+            start = hours[i];
+            end = hours[i];
+          }
+        }
+        windows.push([start, end]);
+        const text = windows.map(([from, to]) => {
+          const fromHour = from.getHours();
+          const toHour = to.getHours() + 1;
+          return fromHour === toHour ? formatHour(fromHour) : `${formatHour(fromHour)}〜${formatHour(toHour)}`;
+        }).join("、");
+        return `雨は${text}ごろの予報です。傘を忘れずに。`;
+      }
+
+      function renderWeather(data) {
+        const current = data.current;
+        const daily = data.daily;
+        const hourly = data.hourly;
+        const [icon, summary] = weatherLabel(current.weather_code);
+        weatherLocation.textContent = WEATHER_LOCATION.name;
+        weatherIcon.textContent = icon;
+        weatherTemp.textContent = `${Math.round(current.temperature_2m)}°`;
+        weatherSummary.textContent = summary;
+        weatherHigh.textContent = `最高 ${Math.round(daily.temperature_2m_max[0])}°`;
+        weatherLow.textContent = `最低 ${Math.round(daily.temperature_2m_min[0])}°`;
+
+        const currentHour = new Date().getHours();
+        const startHour = currentHour - (currentHour % 3);
+        const hourIndexes = [];
+        hourly.time.forEach((time, index) => {
+          const date = new Date(`${time}:00`);
+          const hour = date.getHours();
+          if (index > 0 && hourIndexes.length < 5 && index >= startHour && index % 3 === startHour % 3) hourIndexes.push(index);
+        });
+        const fallbackIndexes = hourly.time.map((_, index) => index).filter((index) => index >= startHour).slice(0, 5);
+        const indexes = hourIndexes.length >= 3 ? hourIndexes : fallbackIndexes;
+        hourlyForecast.innerHTML = indexes.map((index) => {
+          const date = new Date(`${hourly.time[index]}:00`);
+          const [hourIcon] = weatherLabel(hourly.weather_code[index]);
+          const probability = hourly.precipitation_probability[index] || 0;
+          return `<div class="hour"><span class="hour-time">${formatHour(date.getHours())}</span><span class="hour-icon" aria-hidden="true">${hourIcon}</span><span class="hour-rain">${probability >= 20 ? `雨 ${probability}%` : "　"}</span></div>`;
+        }).join("");
+
+        const rainHours = getRainHours(hourly.time, hourly.precipitation_probability, hourly.rain);
+        rainMessage.textContent = formatRainWindow(rainHours);
+      }
+
+      async function loadWeather() {
+        const params = new URLSearchParams({
+          latitude: WEATHER_LOCATION.latitude,
+          longitude: WEATHER_LOCATION.longitude,
+          current: "temperature_2m,weather_code",
+          hourly: "temperature_2m,precipitation_probability,rain,weather_code",
+          daily: "temperature_2m_max,temperature_2m_min,weather_code",
+          timezone: WEATHER_LOCATION.timezone,
+          forecast_days: "2"
+        });
+        try {
+          const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params.toString()}`);
+          if (!response.ok) throw new Error("weather request failed");
+          renderWeather(await response.json());
+        } catch (error) {
+          weatherLocation.textContent = WEATHER_LOCATION.name;
+          weatherSummary.textContent = "取得できませんでした";
+          weatherTemp.textContent = "--°";
+          weatherHigh.textContent = "最高 --°";
+          weatherLow.textContent = "最低 --°";
+          hourlyForecast.innerHTML = "<span class=\"weather-error\">予報を読み込めませんでした。</span>";
+          rainMessage.textContent = "時間をおいて再読み込みしてください。";
+        }
+      }
+
       renderCalendar();
       updateClock();
+      loadWeather();
       window.setInterval(updateClock, 1000);
     })();
   </script>
