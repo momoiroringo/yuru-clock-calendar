@@ -647,9 +647,9 @@
       const QUICK_ACCESS_URLS = {
         diary: "",
         gallery: "",
-        bread: "",
+        recipe: "",
+        log: "",
         fermentation: "",
-        sweets: "",
         handmade: "",
         color: "",
         favorites: ""
@@ -736,6 +736,15 @@
       document.getElementById("nextMonth").addEventListener("click", () => moveMonth(1));
 
       document.querySelectorAll(".quick-link").forEach((link) => {
+        const quickMeta = {
+          bread: { key: "recipe", icon: "\u{1F373}", label: "レシピ" },
+          sweets: { key: "log", icon: "\u{1F4DD}", label: "LOG" }
+        }[link.dataset.notionKey];
+        if (quickMeta) {
+          link.dataset.notionKey = quickMeta.key;
+          link.querySelector(".quick-icon").textContent = quickMeta.icon;
+          link.querySelector(".quick-label").textContent = quickMeta.label;
+        }
         const url = QUICK_ACCESS_URLS[link.dataset.notionKey];
         if (url) {
           link.href = url;
