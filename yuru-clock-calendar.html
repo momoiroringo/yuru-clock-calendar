@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YURU CLOCK &amp; CALENDAR</title>
+  <style>
+    :root {
+      --paper: #f8f2e8;
+      --paper-deep: #f2e9db;
+      --ink: #51443d;
+      --muted: #9a8b7f;
+      --line: #d9cbbb;
+      --accent: #c98c83;
+      --accent-soft: #f0d7cf;
+      --white: #fffaf3;
+      --shadow: 0 14px 30px rgba(100, 75, 55, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-width: 250px;
+      background: transparent;
+    }
+
+    body {
+      padding: 12px;
+      color: var(--ink);
+      font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic", Meiryo, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .widget {
+      position: relative;
+      width: min(100%, 280px);
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid rgba(137, 111, 91, 0.16);
+      border-radius: 24px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .widget::before,
+    .widget::after {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      border-radius: 999px;
+      pointer-events: none;
+      opacity: 0.34;
+    }
+
+    .widget::before {
+      top: -58px;
+      right: -56px;
+      width: 138px;
+      height: 138px;
+      background: var(--accent-soft);
+    }
+
+    .widget::after {
+      bottom: 88px;
+      left: -72px;
+      width: 130px;
+      height: 130px;
+      border: 1px solid var(--accent-soft);
+      background: transparent;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      padding: 21px 18px 16px;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+    }
+
+    .eyebrow span:last-child {
+      color: var(--accent);
+      font-size: 12px;
+      letter-spacing: 0;
+    }
+
+    .clock {
+      margin-top: 5px;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(42px, 17vw, 58px);
+      font-weight: 400;
+      letter-spacing: 0.025em;
+      line-height: 1.08;
+      white-space: nowrap;
+    }
+
+    .date-line {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-top: 3px;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+    }
+
+    .date-line .weekday { color: var(--accent); font-weight: 700; }
+    .date-line .slash { color: var(--line); }
+    .date-line .jp-date { color: var(--muted); }
+
+    .greeting {
+      margin: 14px 0 0;
+      color: var(--ink);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    .dotted {
+      height: 1px;
+      margin: 17px 0 14px;
+      background-image: linear-gradient(to right, var(--line) 35%, transparent 35%);
+      background-position: top;
+      background-size: 5px 1px;
+      background-repeat: repeat-x;
+    }
+
+    .calendar-header,
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .calendar-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .season-mark {
+      display: grid;
+      width: 23px;
+      height: 23px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      font-size: 13px;
+    }
+
+    .month-label {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      letter-spacing: 0.02em;
+    }
+
+    .month-label small {
+      margin-left: 3px;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-buttons { display: flex; gap: 2px; }
+
+    .nav-button {
+      display: grid;
+      width: 25px;
+      height: 25px;
+      padding: 0;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      transition: color 160ms ease, background 160ms ease;
+    }
+
+    .nav-button:hover,
+    .nav-button:focus-visible {
+      outline: none;
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .calendar {
+      width: 100%;
+      margin-top: 12px;
+      border-collapse: separate;
+      border-spacing: 0 3px;
+      table-layout: fixed;
+      font-size: 11px;
+    }
+
+    .calendar th {
+      padding-bottom: 4px;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .calendar th:first-child,
+    .calendar th:last-child { color: var(--accent); }
+
+    .calendar td {
+      height: 28px;
+      padding: 0;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .day {
+      display: grid;
+      width: 26px;
+      height: 26px;
+      margin: auto;
+      place-items: center;
+      border: 1px solid transparent;
+      border-radius: 50%;
+      color: var(--ink);
+      font-weight: 500;
+      transition: background 160ms ease;
+    }
+
+    .day:not(.empty):hover { background: var(--accent-soft); }
+    .day.empty { pointer-events: none; }
+
+    .day.today {
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .day.sunday,
+    .day.saturday { color: #ad8178; }
+    .day.today.sunday,
+    .day.today.saturday { color: var(--accent); }
+
+    .calendar-note {
+      min-height: 16px;
+      margin: 9px 0 0;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.03em;
+      text-align: center;
+    }
+
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 11px;
+      padding-top: 11px;
+      border-top: 1px dashed var(--line);
+      color: var(--muted);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+    }
+
+    .bread-mark {
+      width: 25px;
+      height: 17px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50% 50% 42% 42%;
+      opacity: 0.76;
+      transform: rotate(-3deg);
+    }
+
+    .bread-mark::before,
+    .bread-mark::after {
+      content: "";
+      display: block;
+      width: 7px;
+      height: 1px;
+      margin-top: 5px;
+      margin-left: 5px;
+      background: var(--accent);
+      transform: rotate(-21deg);
+    }
+
+    .bread-mark::after {
+      margin-top: -1px;
+      margin-left: 13px;
+      transform: rotate(21deg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="widget" aria-label="YURU CLOCK & CALENDAR">
+    <div class="content">
+      <div class="eyebrow">
+        <span>YURU CLOCK &amp; CALENDAR</span>
+        <span id="seasonIcon" aria-hidden="true">🌰</span>
+      </div>
+
+      <div class="clock" id="clock" aria-live="polite">00:00</div>
+
+      <div class="date-line">
+        <span class="weekday" id="weekday">月曜日</span>
+        <span class="slash">/</span>
+        <span class="jp-date" id="jpDate">2026年9月5日</span>
+      </div>
+
+      <p class="greeting" id="greeting">今日もゆるっと 🌷</p>
+
+      <div class="dotted"></div>
+
+      <section aria-label="月間カレンダー">
+        <div class="calendar-header">
+          <div class="calendar-title">
+            <span class="season-mark" id="seasonMark" aria-hidden="true">🌰</span>
+            <div class="month-label" id="monthLabel">September<small>2026</small></div>
+          </div>
+          <div class="nav-buttons" aria-label="月を移動">
+            <button class="nav-button" id="prevMonth" type="button" aria-label="前の月">‹</button>
+            <button class="nav-button" id="nextMonth" type="button" aria-label="次の月">›</button>
+          </div>
+        </div>
+
+        <table class="calendar">
+          <thead>
+            <tr>
+              <th scope="col">月</th>
+              <th scope="col">火</th>
+              <th scope="col">水</th>
+              <th scope="col">木</th>
+              <th scope="col">金</th>
+              <th scope="col">土</th>
+              <th scope="col">日</th>
+            </tr>
+          </thead>
+          <tbody id="calendarBody"></tbody>
+        </table>
+        <p class="calendar-note" id="calendarNote">実りの季節を、ひとやすみ。</p>
+      </section>
+
+      <div class="footer">
+        <span>small moments, softly</span>
+        <span class="bread-mark" aria-label="小さな丸パンのマーク"></span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      const weekdays = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
+      const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      const monthData = [
+        { icon: "❄", accent: "#8aa5b4", soft: "#dce8ea", note: "白い息と、あたたかな朝。" },
+        { icon: "🕯", accent: "#b18f7a", soft: "#eaded3", note: "小さな灯りを、そっと。" },
+        { icon: "🌱", accent: "#8da889", soft: "#dce8d8", note: "芽吹きの気配を、ひとつ。" },
+        { icon: "🌷", accent: "#c28e9b", soft: "#eedbe1", note: "風にほどける、春の色。" },
+        { icon: "🍃", accent: "#7fa68b", soft: "#dce9df", note: "新緑のそばで、深呼吸。" },
+        { icon: "☂", accent: "#8e9fb9", soft: "#dfe4ee", note: "雨音も、ゆるやかなBGM。" },
+        { icon: "🍋", accent: "#ba9c55", soft: "#eee7c9", note: "光をひとさじ、夏の窓辺。" },
+        { icon: "🌻", accent: "#c69157", soft: "#f1dfc7", note: "夏の余韻を、ゆっくり。" },
+        { icon: "🌰", accent: "#b47d67", soft: "#edd9cf", note: "実りの季節を、ひとやすみ。" },
+        { icon: "🍂", accent: "#b8795f", soft: "#efd8ca", note: "落ち葉の音に、耳をすます。" },
+        { icon: "🍎", accent: "#b86e68", soft: "#efd4d0", note: "りんご色の午後、ほっと一息。" },
+        { icon: "🔥", accent: "#b47c68", soft: "#eed8ce", note: "薪ストーブのそばで、冬支度。" }
+      ];
+
+      const clock = document.getElementById("clock");
+      const weekday = document.getElementById("weekday");
+      const jpDate = document.getElementById("jpDate");
+      const greeting = document.getElementById("greeting");
+      const monthLabel = document.getElementById("monthLabel");
+      const seasonIcon = document.getElementById("seasonIcon");
+      const seasonMark = document.getElementById("seasonMark");
+      const calendarBody = document.getElementById("calendarBody");
+      const calendarNote = document.getElementById("calendarNote");
+      const root = document.documentElement;
+
+      const now = new Date();
+      let viewedYear = now.getFullYear();
+      let viewedMonth = now.getMonth();
+
+      function pad(value) { return String(value).padStart(2, "0"); }
+
+      function updateClock() {
+        const current = new Date();
+        const hour = current.getHours();
+        let text = "";
+        if (hour >= 5 && hour < 11) text = "おはようございます ☕";
+        else if (hour >= 11 && hour < 17) text = "今日もゆるっと 🌷";
+        else if (hour >= 17 && hour < 21) text = "おかえりなさい 🏠";
+        else text = "今日もおつかれさまでした 🌙";
+
+        clock.textContent = `${pad(current.getHours())}:${pad(current.getMinutes())}`;
+        weekday.textContent = weekdays[current.getDay()];
+        jpDate.textContent = `${current.getFullYear()}年${current.getMonth() + 1}月${current.getDate()}日`;
+        greeting.textContent = text;
+
+        if (viewedYear === current.getFullYear() && viewedMonth === current.getMonth()) renderCalendar();
+      }
+
+      function renderCalendar() {
+        const data = monthData[viewedMonth];
+        root.style.setProperty("--accent", data.accent);
+        root.style.setProperty("--accent-soft", data.soft);
+        seasonIcon.textContent = data.icon;
+        seasonMark.textContent = data.icon;
+        monthLabel.innerHTML = `${monthNames[viewedMonth]}<small>${viewedYear}</small>`;
+        calendarNote.textContent = data.note;
+
+        const firstDay = new Date(viewedYear, viewedMonth, 1).getDay();
+        const offset = (firstDay + 6) % 7; // Monday start
+        const daysInMonth = new Date(viewedYear, viewedMonth + 1, 0).getDate();
+        const isCurrentMonth = viewedYear === now.getFullYear() && viewedMonth === now.getMonth();
+        const today = now.getDate();
+        let html = "";
+        let dayNumber = 1;
+
+        for (let row = 0; row < 6; row += 1) {
+          html += "<tr>";
+          for (let column = 0; column < 7; column += 1) {
+            const cellIndex = row * 7 + column;
+            if (cellIndex < offset || dayNumber > daysInMonth) {
+              html += '<td><span class="day empty" aria-hidden="true"></span></td>';
+              continue;
+            }
+            const currentDay = dayNumber;
+            const isToday = isCurrentMonth && currentDay === today;
+            const weekend = column === 5 ? "saturday" : column === 6 ? "sunday" : "";
+            const classes = ["day", weekend, isToday ? "today" : ""].filter(Boolean).join(" ");
+            html += `<td><span class="${classes}"${isToday ? ' aria-current="date"' : ""}>${currentDay}</span></td>`;
+            dayNumber += 1;
+          }
+          html += "</tr>";
+          if (dayNumber > daysInMonth) break;
+        }
+        calendarBody.innerHTML = html;
+      }
+
+      function moveMonth(amount) {
+        const next = new Date(viewedYear, viewedMonth + amount, 1);
+        viewedYear = next.getFullYear();
+        viewedMonth = next.getMonth();
+        renderCalendar();
+      }
+
+      document.getElementById("prevMonth").addEventListener("click", () => moveMonth(-1));
+      document.getElementById("nextMonth").addEventListener("click", () => moveMonth(1));
+
+      renderCalendar();
+      updateClock();
+      window.setInterval(updateClock, 1000);
+    })();
+  </script>
+</body>
+</html>
